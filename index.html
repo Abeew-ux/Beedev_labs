@@ -187,11 +187,18 @@ textarea{height:65px;resize:none}
 .login button{width:100%;border:0;background:var(--honey);color:#1a1300;border-radius:8px;padding:11px;margin-top:10px;font-weight:600;font-family:inherit}
 .error{color:var(--danger);font-size:10.5px;margin-top:9px;display:none}
 
-.dl{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:18px;text-decoration:none;color:var(--text)}
-.dl img{width:38px;height:38px;border-radius:8px}
-.dl b{display:block;font-family:'Space Grotesk',sans-serif;font-size:13.5px;font-weight:600}
-.dl small{display:block;color:var(--text-dim);font-size:10.5px;margin-top:2px}
-.dl span{margin-left:auto;background:var(--honey);color:#1a1300;border-radius:6px;padding:7px 10px;font-size:11px;font-weight:600}
+.dl{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:18px;background:var(--honey);color:#1a1300;border-radius:12px;padding:15px 16px;text-decoration:none;font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;box-shadow:0 6px 22px rgba(227,168,59,.28)}
+.dl:active{transform:scale(.98)}
+.dl svg{width:20px;height:20px;flex:none}
+.dl-sub{text-align:center;color:var(--text-dim);font-size:10.5px;margin-top:7px}
+.services{margin-top:30px}
+.svc{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:9px}
+.svc b{display:block;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600}
+.svc p{color:var(--text-dim);font-size:12px;line-height:17px;margin-top:4px}
+.svc-row{display:flex;justify-content:flex-end;margin-top:11px}
+.wa{display:inline-block;text-decoration:none;background:var(--honey);color:#1a1300;border-radius:6px;padding:8px 12px;font-size:11.5px;font-weight:600}
+.wa:active{transform:scale(.97)}
+.svc-intro{color:var(--text-dim);font-size:12px;line-height:17px;margin-bottom:13px}
 @media(max-width:350px){.apps{grid-template-columns:1fr}}
 </style>
 </head>
@@ -200,6 +207,13 @@ textarea{height:65px;resize:none}
 <div class="hero">
   <div class="hero-inner">
     <div class="wordmark">beedev<em>_labs</em></div>
+    <div id="dlBox">
+      <a id="dlApp" class="dl" href="beedev_labs.apk" download="beedev_labs.apk">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-5-5m5 5l5-5M5 21h14"/></svg>
+        Télécharger l'application
+      </a>
+      <div class="dl-sub">Application Android gratuite</div>
+    </div>
     <div class="search-wrap">
       <input id="search" class="search" type="text" placeholder="Rechercher un projet…">
     </div>
@@ -207,17 +221,37 @@ textarea{height:65px;resize:none}
 </div>
 
 <main class="container">
-  <a id="dlApp" class="dl" href="beedev_labs.apk" download="beedev_labs.apk">
-    <img src="icon-192.png" alt="">
-    <div><b>Application Android</b><small>Installe beedev_labs sur ton téléphone</small></div>
-    <span>Télécharger</span>
-  </a>
   <div class="section-head">
     <h2>Projets</h2>
     <span id="count" class="count"></span>
   </div>
   <div id="apps" class="apps"></div>
   <div id="empty" class="empty">Aucun projet trouvé.</div>
+
+  <section id="services" class="services">
+    <div class="section-head"><h2>Services</h2></div>
+    <p class="svc-intro">Tu as un projet ? Je le réalise de A à Z, pensé pour le téléphone et les connexions lentes.</p>
+    <div class="svc">
+      <b>Site vitrine</b>
+      <p>Présente ton activité, tes produits et tes contacts avec un site rapide et moderne.</p>
+      <div class="svc-row"><a class="wa" data-service="un site vitrine" href="#">Demander un devis</a></div>
+    </div>
+    <div class="svc">
+      <b>Boutique en ligne</b>
+      <p>Catalogue, panier et commandes par WhatsApp ou paiement mobile.</p>
+      <div class="svc-row"><a class="wa" data-service="une boutique en ligne" href="#">Demander un devis</a></div>
+    </div>
+    <div class="svc">
+      <b>Application mobile</b>
+      <p>Ton site transformé en application installable, avec fichier APK Android.</p>
+      <div class="svc-row"><a class="wa" data-service="une application mobile" href="#">Demander un devis</a></div>
+    </div>
+    <div class="svc">
+      <b>Plateforme sur mesure</b>
+      <p>Réservation, transport, annonces, comptes utilisateurs : on construit ce dont tu as besoin.</p>
+      <div class="svc-row"><a class="wa" data-service="une plateforme sur mesure" href="#">Demander un devis</a></div>
+    </div>
+  </section>
 
   <div class="ad-slot">
     <script>
@@ -482,12 +516,21 @@ function safe(value){
     .replace(/'/g,"&#039;");
 }
 
+/* Services : bouton WhatsApp */
+const WA_NUMBER="22797470831";
+document.querySelectorAll(".wa").forEach(a=>{
+  if(!WA_NUMBER){a.style.display="none";return;}
+  const msg="Bonjour, je voudrais un devis pour "+a.dataset.service+".";
+  a.href="https://wa.me/"+WA_NUMBER+"?text="+encodeURIComponent(msg);
+  a.target="_blank";a.rel="noopener";
+});
+
 renderSites();
 loadSites();
 
 /* Cache le bouton APK si l'app est déjà installée */
 if(window.matchMedia("(display-mode: standalone)").matches||navigator.standalone){
-  document.getElementById("dlApp").style.display="none";
+  document.getElementById("dlBox").style.display="none";
 }
 
 /* PWA : service worker + installation */
@@ -511,6 +554,8 @@ window.addEventListener("appinstalled",()=>{document.getElementById("installBtn"
 </script>
 
 <!-- Publicité Monetag -->
+<!-- Désactivé : script Monetag intrusif. Pour le réactiver, retire les balises de commentaire.
 <script src="https://pl31536747.profitableratecpmnetwork.com/bc/a4/bb/bca4bb684c4f0dc181202d4d8da79c2a.js"></script>
+-->
 </body>
 </html>
