@@ -4,6 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>beedev_labs</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0a0c10">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="beedev_labs">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -217,6 +225,7 @@ textarea{height:65px;resize:none}
 
 <footer>
   © 2026 beedev_labs
+  <button id="installBtn" class="adminButton" style="display:none" onclick="installApp()">Installer l'app</button>
   <button class="adminButton" onclick="openAdmin()">Admin</button>
 </footer>
 
@@ -277,6 +286,11 @@ let sites=[];
 let editId=null;
 let lastSearch="";
 
+try{
+  const cached=JSON.parse(localStorage.getItem("beedev_sites_cache")||"null");
+  if(Array.isArray(cached)&&cached.length){sites=cached;}
+}catch(e){}
+
 async function loadSites(){
   if(!db){
     console.error("Supabase n'est pas chargé.");
@@ -291,6 +305,7 @@ async function loadSites(){
       return;
     }
     sites=data||[];
+    try{localStorage.setItem("beedev_sites_cache",JSON.stringify(sites));}catch(e){}
     renderSites(lastSearch);
     if(document.getElementById("dashboard").style.display==="block")renderAdmin();
   }catch(err){
@@ -457,7 +472,27 @@ function safe(value){
     .replace(/'/g,"&#039;");
 }
 
+renderSites();
 loadSites();
+
+/* PWA : service worker + installation */
+if("serviceWorker" in navigator){
+  window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(e=>console.error("SW:",e)));
+}
+let deferredPrompt=null;
+window.addEventListener("beforeinstallprompt",e=>{
+  e.preventDefault();
+  deferredPrompt=e;
+  document.getElementById("installBtn").style.display="inline";
+});
+async function installApp(){
+  if(!deferredPrompt)return;
+  deferredPrompt.prompt();
+  await deferredPrompt.userChoice;
+  deferredPrompt=null;
+  document.getElementById("installBtn").style.display="none";
+}
+window.addEventListener("appinstalled",()=>{document.getElementById("installBtn").style.display="none";});
 </script>
 
 <!-- Publicité Monetag -->
