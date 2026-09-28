@@ -187,6 +187,11 @@ textarea{height:65px;resize:none}
 .login button{width:100%;border:0;background:var(--honey);color:#1a1300;border-radius:8px;padding:11px;margin-top:10px;font-weight:600;font-family:inherit}
 .error{color:var(--danger);font-size:10.5px;margin-top:9px;display:none}
 
+.dl{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:18px;text-decoration:none;color:var(--text)}
+.dl img{width:38px;height:38px;border-radius:8px}
+.dl b{display:block;font-family:'Space Grotesk',sans-serif;font-size:13.5px;font-weight:600}
+.dl small{display:block;color:var(--text-dim);font-size:10.5px;margin-top:2px}
+.dl span{margin-left:auto;background:var(--honey);color:#1a1300;border-radius:6px;padding:7px 10px;font-size:11px;font-weight:600}
 @media(max-width:350px){.apps{grid-template-columns:1fr}}
 </style>
 </head>
@@ -202,6 +207,11 @@ textarea{height:65px;resize:none}
 </div>
 
 <main class="container">
+  <a id="dlApp" class="dl" href="beedev_labs.apk" download="beedev_labs.apk">
+    <img src="icon-192.png" alt="">
+    <div><b>Application Android</b><small>Installe beedev_labs sur ton téléphone</small></div>
+    <span>Télécharger</span>
+  </a>
   <div class="section-head">
     <h2>Projets</h2>
     <span id="count" class="count"></span>
@@ -474,6 +484,11 @@ function safe(value){
 
 renderSites();
 loadSites();
+
+/* Cache le bouton APK si l'app est déjà installée */
+if(window.matchMedia("(display-mode: standalone)").matches||navigator.standalone){
+  document.getElementById("dlApp").style.display="none";
+}
 
 /* PWA : service worker + installation */
 if("serviceWorker" in navigator){
